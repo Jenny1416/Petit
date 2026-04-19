@@ -3,9 +3,53 @@ import '../../../../app/router/app_router.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
+import '../controllers/auth_controller.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final AuthController controller = AuthController();
+
+  bool isLoading = false;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> handleLogin() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final error = await controller.login(
+      emailController.text.trim(),
+      passwordController.text.trim(),
+    );
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (!mounted) return;
+
+    if (error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error)),
+      );
+    } else {
+      Navigator.pushReplacementNamed(context, AppRouter.home);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +70,15 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              const CustomTextField(hintText: 'Correo electrónico'),
+              CustomTextField(
+                hintText: 'Correo electrónico',
+                controller: emailController,
+              ),
               const SizedBox(height: 12),
-              const CustomTextField(
+              CustomTextField(
                 hintText: 'Contraseña',
                 obscureText: true,
+                controller: passwordController,
               ),
               const SizedBox(height: 12),
               Align(
@@ -44,10 +92,8 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               PrimaryButton(
-                text: 'Ingresar',
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, AppRouter.home);
-                },
+                text: isLoading ? 'Cargando...' : 'Ingresar',
+                onPressed: isLoading ? null : handleLogin,
               ),
               TextButton(
                 onPressed: () {
