@@ -24,7 +24,7 @@ class OnboardingPage extends StatelessWidget {
             PrimaryButton(
               text: 'Empezar',
               onPressed: () {
-                Navigator.pushNamed(context, AppRouter.login);
+                Navigator.pushNamed(context, AppRouter.home);
               },
             ),
           ],

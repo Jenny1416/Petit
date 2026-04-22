@@ -18,8 +18,15 @@ class AuthController {
   }
 
   Future<String?> register(
-      String email, String password, String confirmPassword, String phone) async {
-    if (email.isEmpty || password.isEmpty || phone.isEmpty) {
+      String email,
+      String password,
+      String confirmPassword,
+      String phone,
+      ) async {
+    if (email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty ||
+        phone.isEmpty) {
       return 'Completa todos los campos';
     }
 
@@ -50,9 +57,17 @@ class AuthController {
     return null;
   }
 
-  Future<String?> resetPassword(String email, String newPassword) async {
-    if (newPassword.isEmpty) {
-      return 'Ingresa la nueva contraseña';
+  Future<String?> resetPassword(
+      String email,
+      String newPassword,
+      String confirmPassword,
+      ) async {
+    if (newPassword.isEmpty || confirmPassword.isEmpty) {
+      return 'Completa todos los campos';
+    }
+
+    if (newPassword != confirmPassword) {
+      return 'Las contraseñas no coinciden';
     }
 
     final success = await _authService.resetPassword(email, newPassword);
