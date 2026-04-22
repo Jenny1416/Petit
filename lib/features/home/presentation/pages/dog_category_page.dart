@@ -16,7 +16,7 @@ class DogCategoryPage extends StatelessWidget {
       },
       {
         'title': 'Accesorios',
-        'image': 'assets/categories/accesorios.png',
+        'image': 'assets/categories/accesorios_home.png',
       },
       {
         'title': 'Salud',
@@ -72,7 +72,7 @@ class DogCategoryPage extends StatelessWidget {
                     crossAxisCount: 2,
                     mainAxisSpacing: 14,
                     crossAxisSpacing: 14,
-                    childAspectRatio: 0.83,
+                    childAspectRatio: 0.78,
                   ),
                   itemBuilder: (context, index) {
                     final category = categories[index];
@@ -126,7 +126,7 @@ class DogCategoryPage extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 SizedBox(
-                  height: 260,
+                  height: 275,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: const [
