@@ -1,17 +1,16 @@
 import '../models/user_model.dart';
 
 class AuthService {
-  // Simulación de base de datos en memoria
   final List<UserModel> _users = [];
 
   Future<bool> login(String email, String password) async {
     await Future.delayed(const Duration(seconds: 1));
 
     try {
-      final user = _users.firstWhere(
+      _users.firstWhere(
             (u) => u.email == email && u.password == password,
       );
-      return user != null;
+      return true;
     } catch (e) {
       return false;
     }
@@ -23,11 +22,13 @@ class AuthService {
     final exists = _users.any((u) => u.email == email);
     if (exists) return false;
 
-    _users.add(UserModel(
-      email: email,
-      password: password,
-      phone: phone,
-    ));
+    _users.add(
+      UserModel(
+        email: email,
+        password: password,
+        phone: phone,
+      ),
+    );
 
     return true;
   }

@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "name": "Alimento Húmedo Para Perro Wow Can Con Cerdo",
+    "brand": "Wow Can",
+    "price": 1500,
+    "oldPrice": 3500,
+    "discount": 60,
+    "rating": 4.8,
+    "reviews": 1500,
+    "image": "assets/images/products/product_1.png",
+    "category": "Perros",
+    "isFeatured": false
+  },
+  {
+    "id": 2,
+    "name": "Kit Arnés y Correa para Puppis Nylon Fucsia",
+    "brand": "Puppis",
+    "price": 7999,
+    "oldPrice": 9999,
+    "discount": 50,
+    "rating": 4.6,
+    "reviews": 647776,
+    "image": "assets/images/products/product_2.png",
+    "category": "Accesorios",
+    "isFeatured": false
+  },
+  {
+    "id": 3,
+    "name": "Mixtura Pericos y Canarios Vitagrano",
+    "brand": "Vitagrano",
+    "price": 12500,
+    "oldPrice": 15000,
+    "discount": 20,
+    "rating": 4.7,
+    "reviews": 325,
+    "image": "assets/images/products/product_3.png",
+    "category": "Aves",
+    "isFeatured": true
+  }
+]

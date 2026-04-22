@@ -26,30 +26,37 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  Future<void> handleLogin() async {
-    setState(() {
-      isLoading = true;
-    });
+  //Future<void> handleLogin() async {
+  //setState(() {
+//isLoading = true;
+  //});
 
-    final error = await controller.login(
-      emailController.text.trim(),
-      passwordController.text.trim(),
-    );
+  //final error = await controller.login(
+  //emailController.text.trim(),
+  //passwordController.text.trim(),
+  //);
+  //setState(() {
+//isLoading = false;
+  // });
 
-    setState(() {
-      isLoading = false;
-    });
+  //if (!mounted) return;
 
-    if (!mounted) return;
+  // if (error != null) {
+  //  ScaffoldMessenger.of(context).showSnackBar(
+  //    SnackBar(content: Text(error)),
+//  );
+  // } else {
+//  Navigator.pushReplacementNamed(context, AppRouter.home);
+// }
+  //}
 
-    if (error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error)),
-      );
-    } else {
-      Navigator.pushReplacementNamed(context, AppRouter.home);
-    }
+  Future handleLogin() async {
+    Navigator.pushReplacementNamed(context, AppRouter.home);
   }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
