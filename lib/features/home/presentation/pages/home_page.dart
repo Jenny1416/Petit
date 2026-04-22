@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../data/models/home_product.dart';
-import '../../data/repositories/home_repository.dart';
+import '../../data/services/home_service.dart';
 import '../widgets/home_header.dart';
 import '../widgets/search_bar_widget.dart';
 import '../widgets/categories_list.dart';
@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _productsFuture = HomeRepository().loadProducts();
+    _productsFuture = HomeService().loadProducts();
   }
 
   @override
