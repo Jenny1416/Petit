@@ -12,7 +12,7 @@ class PetitApp extends StatelessWidget {
       title: 'PETIT',
       theme: AppTheme.lightTheme,
       onGenerateRoute: AppRouter.onGenerateRoute,
-      initialRoute: AppRouter.splash,
+        initialRoute: AppRouter.home,
     );
   }
 }
