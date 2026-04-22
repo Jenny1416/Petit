@@ -72,7 +72,7 @@ class DogCategoryPage extends StatelessWidget {
                     crossAxisCount: 2,
                     mainAxisSpacing: 14,
                     crossAxisSpacing: 14,
-                    childAspectRatio: 0.78,
+                    childAspectRatio: 0.85,
                   ),
                   itemBuilder: (context, index) {
                     final category = categories[index];
@@ -90,7 +90,7 @@ class DogCategoryPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Image.asset(
-                      'assets/icons/ofertas_especiales.png',
+                      'assets/categories/ofertas_especiales.png',
                       width: 52,
                       height: 52,
                       fit: BoxFit.contain,
@@ -126,12 +126,12 @@ class DogCategoryPage extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 SizedBox(
-                  height: 275,
+                  height: 260,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: const [
                       _DogProductCard(
-                        image: 'assets/products/product_1.png',
+                        image: 'assets/categories/product_1.png',
                         name: 'Alimento Húmedo Para Perro Wow Can Cerdo',
                         brand: 'Wow Can',
                         price: '\$1500',
@@ -140,7 +140,7 @@ class DogCategoryPage extends StatelessWidget {
                       ),
                       SizedBox(width: 12),
                       _DogProductCard(
-                        image: 'assets/products/product_2.png',
+                        image: 'assets/categories/product_2.png',
                         name: 'Kit Arnés y Correa para Gato Puppis Nylon Fucsia',
                         brand: 'Puppis',
                         price: '\$7999',
