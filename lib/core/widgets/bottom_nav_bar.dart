@@ -1,0 +1,85 @@
+import 'package:flutter/material.dart';
+import '../../app/router/app_router.dart';
+
+class BottomNavBar extends StatelessWidget {
+  const BottomNavBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Detectamos la ruta actual para saber qué icono resaltar
+    final currentRoute = ModalRoute.of(context)?.settings.name;
+
+    int currentIndex = 0;
+    if (currentRoute == AppRouter.home) currentIndex = 0;
+    if (currentRoute == AppRouter.wishlist) currentIndex = 1;
+    if (currentRoute == AppRouter.cart) currentIndex = 2;
+    if (currentRoute == AppRouter.orders) currentIndex = 3;
+    if (currentRoute == AppRouter.settings) currentIndex = 4;
+
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      currentIndex: currentIndex,
+      backgroundColor: Colors.white,
+      selectedItemColor: const Color(0xFF32B56A), // Tu color verde Petit
+      unselectedItemColor: const Color(0xFF666666),
+      showSelectedLabels: true,
+      showUnselectedLabels: true,
+      selectedLabelStyle: const TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedLabelStyle: const TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w500,
+      ),
+      onTap: (index) {
+        if (index == currentIndex) return;
+
+        switch (index) {
+          case 0:
+            Navigator.pushReplacementNamed(context, AppRouter.home);
+            break;
+          case 1:
+            Navigator.pushReplacementNamed(context, AppRouter.wishlist);
+            break;
+          case 2:
+            // Navigator.pushReplacementNamed(context, AppRouter.cart);
+            break;
+          case 3:
+            // Navigator.pushReplacementNamed(context, AppRouter.orders);
+            break;
+          case 4:
+            // Navigator.pushReplacementNamed(context, AppRouter.settings);
+            break;
+        }
+      },
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home_outlined),
+          activeIcon: Icon(Icons.home),
+          label: 'Inicio',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.favorite_border),
+          activeIcon: Icon(Icons.favorite),
+          label: 'Deseos',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_cart_outlined),
+          activeIcon: Icon(Icons.shopping_cart),
+          label: 'Carrito',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.receipt_long_outlined),
+          activeIcon: Icon(Icons.receipt_long),
+          label: 'Pedidos',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings_outlined),
+          activeIcon: Icon(Icons.settings),
+          label: 'Configuración',
+        ),
+      ],
+    );
+  }
+}

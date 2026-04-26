@@ -1,71 +1,79 @@
 import 'package:flutter/material.dart';
+import '../../../../core/widgets/home_header.dart';
+import '../../../../core/widgets/search_bar_widget.dart';
+import '../../../../core/widgets/product_card.dart';
+import '../../../../core/widgets/bottom_nav_bar.dart';
+import '../../../../core/widgets/filter_sort_bar.dart';
+import '../controllers/dog_category_controller.dart';
 
-class DogCategoryPage extends StatelessWidget {
+class DogCategoryPage extends StatefulWidget {
   const DogCategoryPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, String>> categories = [
-      {
-        'title': 'Alimentos',
-        'image': 'assets/categories/alimentos.png',
-      },
-      {
-        'title': 'Higiente y Estética',
-        'image': 'assets/categories/higiene_estetica.png',
-      },
-      {
-        'title': 'Accesorios',
-        'image': 'assets/categories/accesorios_home.png',
-      },
-      {
-        'title': 'Salud',
-        'image': 'assets/categories/salud.png',
-      },
-    ];
+  State<DogCategoryPage> createState() => _DogCategoryPageState();
+}
 
+class _DogCategoryPageState extends State<DogCategoryPage> {
+  final DogCategoryController _controller = DogCategoryController();
+
+  final List<Map<String, String>> _subcategories = [
+    {'title': 'Alimentos', 'image': 'assets/categories/alimentos.png'},
+    {'title': 'Higiene y Estética', 'image': 'assets/categories/higiene_estetica.png'},
+    {'title': 'Accesorios', 'image': 'assets/categories/accesorios_home.png'},
+    {'title': 'Salud', 'image': 'assets/categories/salud.png'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onControllerUpdate);
+    _controller.loadProducts();
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onControllerUpdate);
+    super.dispose();
+  }
+
+  void _onControllerUpdate() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
+      bottomNavigationBar: const BottomNavBar(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const _TopHeader(),
-                const SizedBox(height: 16),
-                const _SearchBox(),
+                const SizedBox(height: 10),
+                const HomeHeader(),
+                const SizedBox(height: 18),
+                SearchBarWidget(
+                  onChanged: (value) => _controller.setSearchQuery(value),
+                  hintText: 'Buscar productos...',
+                ),
                 const SizedBox(height: 20),
-
-                Row(
-                  children: [
-                    const Expanded(
-                      child: Text(
-                        'Categoría Perros',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF111111),
-                        ),
-                      ),
-                    ),
-                    _smallActionButton(
-                      icon: Icons.swap_vert,
-                      text: 'Sort',
-                    ),
-                    const SizedBox(width: 8),
-                    _smallActionButton(
-                      icon: Icons.filter_alt_outlined,
-                      text: 'Filter',
-                    ),
-                  ],
+                
+                FilterSortBar(
+                  title: 'Categoría ${_controller.selectedCategory}',
+                  currentSort: _controller.currentSort,
+                  onSortChanged: (option) => _controller.setSortOption(option),
+                  selectedCategory: _controller.selectedCategory,
+                  categories: _controller.getPetCategories(),
+                  onCategoryChanged: (cat) => _controller.setCategory(cat),
                 ),
 
                 const SizedBox(height: 20),
 
                 GridView.builder(
-                  itemCount: categories.length,
+                  itemCount: _subcategories.length,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -75,11 +83,13 @@ class DogCategoryPage extends StatelessWidget {
                     childAspectRatio: 0.85,
                   ),
                   itemBuilder: (context, index) {
-                    final category = categories[index];
-
+                    final sub = _subcategories[index];
+                    final isSelected = _controller.selectedSubcategory == sub['title'];
                     return _DogCategoryCard(
-                      title: category['title']!,
-                      image: category['image']!,
+                      title: sub['title']!,
+                      image: sub['image']!,
+                      isSelected: isSelected,
+                      onTap: () => _controller.setSubcategory(sub['title']!),
                     );
                   },
                 ),
@@ -96,21 +106,23 @@ class DogCategoryPage extends StatelessWidget {
                       fit: BoxFit.contain,
                     ),
                     const SizedBox(width: 12),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Ofertas Especiales',
-                            style: TextStyle(
+                            _controller.selectedSubcategory == 'Todos' 
+                              ? 'Productos para ${_controller.selectedCategory}'
+                              : 'Resultados para ${_controller.selectedSubcategory}',
+                            style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: Color(0xFF111111),
                             ),
                           ),
-                          SizedBox(height: 6),
-                          Text(
-                            'Nos aseguramos de que obtengas la oferta que necesitas a los mejores precios.',
+                          const SizedBox(height: 6),
+                          const Text(
+                            'Los mejores productos seleccionados para tu mejor amigo.',
                             style: TextStyle(
                               fontSize: 14,
                               color: Color(0xFF666666),
@@ -125,124 +137,58 @@ class DogCategoryPage extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                SizedBox(
-                  height: 260,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: const [
-                      _DogProductCard(
-                        image: 'assets/categories/product_1.png',
-                        name: 'Alimento Húmedo Para Perro Wow Can Cerdo',
-                        brand: 'Wow Can',
-                        price: '\$1500',
-                        oldPrice: '\$3500',
-                        discount: '60%Off',
+                if (_controller.isLoading)
+                  const Center(child: Padding(
+                    padding: EdgeInsets.all(40.0),
+                    child: CircularProgressIndicator(),
+                  ))
+                else if (_controller.filteredProducts.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40),
+                    child: Center(
+                      child: Column(
+                        children: [
+                          Icon(Icons.search_off, size: 60, color: Colors.grey),
+                          SizedBox(height: 16),
+                          Text(
+                            'No encontramos lo que buscas',
+                            style: TextStyle(color: Colors.grey, fontSize: 16),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 12),
-                      _DogProductCard(
-                        image: 'assets/categories/product_2.png',
-                        name: 'Kit Arnés y Correa para Gato Puppis Nylon Fucsia',
-                        brand: 'Puppis',
-                        price: '\$7999',
-                        oldPrice: '\$9999',
-                        discount: '50%Off',
-                      ),
-                    ],
+                    ),
+                  )
+                else
+                  SizedBox(
+                    height: 310,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _controller.filteredProducts.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 14),
+                      itemBuilder: (context, index) {
+                        final product = _controller.filteredProducts[index];
+                        return ProductCard(
+                          product: ProductModel(
+                            id: product.id,
+                            image: product.image,
+                            name: product.name,
+                            brand: product.brand,
+                            price: '\$${product.price.toStringAsFixed(0)}',
+                            oldPrice: '\$${product.oldPrice.toStringAsFixed(0)}',
+                            discount: '${product.discount}%Off',
+                            rating: product.rating,
+                            reviews: product.reviews.toString(),
+                          ),
+                          isFavorite: _controller.isFavorite(product.id),
+                          onFavoriteToggle: () => _controller.toggleFavorite(product.id),
+                        );
+                      },
+                    ),
                   ),
-                ),
+                const SizedBox(height: 30),
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  static Widget _smallActionButton({
-    required IconData icon,
-    required String text,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE8E8E8)),
-      ),
-      child: Row(
-        children: [
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF444444),
-            ),
-          ),
-          const SizedBox(width: 4),
-          Icon(icon, size: 16, color: const Color(0xFF444444)),
-        ],
-      ),
-    );
-  }
-}
-
-class _TopHeader extends StatelessWidget {
-  const _TopHeader();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.black,
-          ),
-        ),
-        const Spacer(),
-        const Text(
-          'PETIT',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF1E7D45),
-          ),
-        ),
-        const Spacer(),
-        const CircleAvatar(
-          radius: 18,
-          backgroundColor: Color(0xFFFFE1EA),
-          child: Icon(Icons.person, color: Colors.black),
-        ),
-      ],
-    );
-  }
-}
-
-class _SearchBox extends StatelessWidget {
-  const _SearchBox();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 48,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: const TextField(
-        decoration: InputDecoration(
-          hintText: 'Busque cualquier producto.',
-          hintStyle: TextStyle(
-            color: Color(0xFFB4B4B4),
-            fontSize: 14,
-          ),
-          prefixIcon: Icon(Icons.search, color: Color(0xFFB4B4B4)),
-          suffixIcon: Icon(Icons.mic_none, color: Color(0xFFB4B4B4)),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(vertical: 14),
         ),
       ),
     );
@@ -252,153 +198,58 @@ class _SearchBox extends StatelessWidget {
 class _DogCategoryCard extends StatelessWidget {
   final String title;
   final String image;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   const _DogCategoryCard({
     required this.title,
     required this.image,
+    required this.isSelected,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x14000000),
-            blurRadius: 10,
-            offset: Offset(0, 4),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? const Color(0xFF32B56A) : Colors.transparent,
+            width: 2,
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-        child: Column(
-          children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  image,
-                  width: double.infinity,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF222222),
-              ),
+          boxShadow: [
+            BoxShadow(
+              color: isSelected 
+                ? const Color(0xFF32B56A).withOpacity(0.1) 
+                : const Color(0x14000000),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _DogProductCard extends StatelessWidget {
-  final String image;
-  final String name;
-  final String brand;
-  final String price;
-  final String oldPrice;
-  final String discount;
-
-  const _DogProductCard({
-    required this.image,
-    required this.name,
-    required this.brand,
-    required this.price,
-    required this.oldPrice,
-    required this.discount,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 155,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x12000000),
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Center(
-              child: Image.asset(
-                image,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            name,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF111111),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            brand,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF7A7A7A),
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            price,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF111111),
-            ),
-          ),
-          Row(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
             children: [
-              Text(
-                oldPrice,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFFA0A0A0),
-                  decoration: TextDecoration.lineThrough,
-                ),
+              Expanded(
+                child: Image.asset(image, fit: BoxFit.contain),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(height: 10),
               Text(
-                discount,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF69B96B),
-                  fontWeight: FontWeight.w600,
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                  color: isSelected ? const Color(0xFF32B56A) : const Color(0xFF222222),
                 ),
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

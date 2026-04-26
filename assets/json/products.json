@@ -36,6 +36,6 @@
     "reviews": 325,
     "image": "assets/images/products/product_3.png",
     "category": "Aves",
-    "isFeatured": true
+    "isFeatured": false
   }
 ]
