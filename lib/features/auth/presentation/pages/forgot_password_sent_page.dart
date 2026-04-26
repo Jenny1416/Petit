@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../app/router/app_router.dart';
-import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/primary_button.dart';
 
 class ForgotPasswordSentPage extends StatelessWidget {
@@ -18,7 +17,6 @@ class ForgotPasswordSentPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const AppLogo(),
             const SizedBox(height: 32),
             const Icon(
               Icons.mark_email_read_outlined,

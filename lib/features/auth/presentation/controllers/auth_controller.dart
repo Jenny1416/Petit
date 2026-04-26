@@ -8,9 +8,9 @@ class AuthController {
       return 'Completa todos los campos';
     }
 
-    final success = await _authService.login(email, password);
+    final user = await _authService.login(email, password);
 
-    if (!success) {
+    if (user == null) {
       return 'Credenciales incorrectas';
     }
 
@@ -22,6 +22,7 @@ class AuthController {
       String password,
       String confirmPassword,
       String phone,
+      String? imagePath,
       ) async {
     if (email.isEmpty ||
         password.isEmpty ||
@@ -34,7 +35,7 @@ class AuthController {
       return 'Las contraseñas no coinciden';
     }
 
-    final success = await _authService.register(email, password, phone);
+    final success = await _authService.register(email, password, phone, imagePath);
 
     if (!success) {
       return 'El usuario ya existe';
@@ -50,11 +51,12 @@ class AuthController {
 
     final success = await _authService.sendResetLink(email);
 
-    if (!success) {
-      return 'El correo no está registrado';
+    if (success) {
+      _authService.passwordResetEmail = email; // Guardamos el email globalmente
+      return null;
     }
 
-    return null;
+    return 'El correo no está registrado';
   }
 
   Future<String?> resetPassword(
@@ -78,4 +80,10 @@ class AuthController {
 
     return null;
   }
+
+  void logout() {
+    _authService.logout();
+  }
+
+  String? get currentResetEmail => _authService.passwordResetEmail;
 }
