@@ -4,7 +4,7 @@ class UserModel {
   final String phone;
   final String? imagePath;
   final List<String> activityLogs;
-  final List<String> favorites;
+  final List<int> favorites;
 
   UserModel({
     required this.email,
@@ -21,7 +21,7 @@ class UserModel {
     String? phone,
     String? imagePath,
     List<String>? activityLogs,
-    List<String>? favorites,
+    List<int>? favorites,
   }) {
     return UserModel(
       email: email ?? this.email,

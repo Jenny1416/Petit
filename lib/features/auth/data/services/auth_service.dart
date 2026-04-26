@@ -101,4 +101,22 @@ class AuthService {
   void addActivity(String activity) {
     _logActivity(activity);
   }
+
+  Future<void> toggleFavorite(int productId) async {
+    if (_currentUser == null) return;
+
+    final currentFavorites = List<int>.from(_currentUser!.favorites);
+    if (currentFavorites.contains(productId)) {
+      currentFavorites.remove(productId);
+    } else {
+      currentFavorites.add(productId);
+    }
+
+    _currentUser = _currentUser!.copyWith(favorites: currentFavorites);
+    
+    final index = _users.indexWhere((u) => u.email.toLowerCase() == _currentUser!.email.toLowerCase());
+    if (index != -1) {
+      _users[index] = _currentUser!;
+    }
+  }
 }
