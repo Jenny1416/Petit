@@ -4,7 +4,7 @@ import '../../../products/data/models/product_model.dart';
 import '../../data/services/home_service.dart';
 import '../../../auth/data/services/auth_service.dart';
 
-class DogCategoryController extends ChangeNotifier {
+class PetCategoryController extends ChangeNotifier {
   final HomeService _service = HomeService();
   final AuthService _authService = AuthService();
   
@@ -13,7 +13,7 @@ class DogCategoryController extends ChangeNotifier {
   bool _isLoading = true;
   String _searchQuery = '';
   String _selectedSubcategory = 'Todos';
-  String _selectedCategory = 'Perro'; 
+  String _selectedCategory = 'Todos';
   SortOption _currentSort = SortOption.none;
 
   List<ProductModel> get filteredProducts => _filteredProducts;
@@ -38,7 +38,8 @@ class DogCategoryController extends ChangeNotifier {
       reviews: p.reviews,
       image: p.image,
       category: p.category,
-      isFeatured: true,
+      subcategory: p.subcategory,
+      isFeatured: p.isFeatured,
     )).toList();
     
     _applyFilters();
@@ -73,7 +74,7 @@ class DogCategoryController extends ChangeNotifier {
   }
 
   List<String> getPetCategories() {
-    return ['Todos', 'Perro', 'Gato', 'Aves', 'Peces'];
+    return ['Todos', 'Perro', 'Gato', 'Aves', 'Peces', 'Hamster'];
   }
 
   bool isFavorite(int productId) {
@@ -94,8 +95,10 @@ class DogCategoryController extends ChangeNotifier {
       
       final matchesCategory = _selectedCategory == 'Todos' || product.category == _selectedCategory;
       
-      final matchesSubcategory = _selectedSubcategory == 'Todos' || 
-                                 product.name.contains(_selectedSubcategory);
+      bool matchesSubcategory = true;
+      if (_selectedSubcategory != 'Todos') {
+        matchesSubcategory = product.subcategory == _selectedSubcategory;
+      }
       
       return matchesSearch && matchesCategory && matchesSubcategory;
     }).toList();

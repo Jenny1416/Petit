@@ -20,38 +20,18 @@ class BottomNavBar extends StatelessWidget {
       type: BottomNavigationBarType.fixed,
       currentIndex: currentIndex,
       backgroundColor: Colors.white,
-      selectedItemColor: const Color(0xFF32B56A), // Tu color verde Petit
+      selectedItemColor: const Color(0xFF32B56A),
       unselectedItemColor: const Color(0xFF666666),
       showSelectedLabels: true,
       showUnselectedLabels: true,
-      selectedLabelStyle: const TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-      ),
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w500,
-      ),
       onTap: (index) {
-        if (index == currentIndex) return;
-
-        switch (index) {
-          case 0:
-            Navigator.pushReplacementNamed(context, AppRouter.home);
-            break;
-          case 1:
-            Navigator.pushReplacementNamed(context, AppRouter.wishlist);
-            break;
-          case 2:
-            // Navigator.pushReplacementNamed(context, AppRouter.cart);
-            break;
-          case 3:
-            // Navigator.pushReplacementNamed(context, AppRouter.orders);
-            break;
-          case 4:
-            // Navigator.pushReplacementNamed(context, AppRouter.settings);
-            break;
+        if (index == 0) {
+          // Si presionamos Inicio, siempre navegamos al home (limpiando el stack de categorías)
+          Navigator.pushNamedAndRemoveUntil(context, AppRouter.home, (route) => false);
+        } else if (index == 1) {
+          Navigator.pushReplacementNamed(context, AppRouter.wishlist);
         }
+        // Puedes añadir aquí el resto de casos (carrito, etc.) cuando las rutas existan
       },
       items: const [
         BottomNavigationBarItem(

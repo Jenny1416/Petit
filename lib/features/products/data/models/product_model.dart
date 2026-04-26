@@ -9,6 +9,7 @@ class ProductModel {
   final int reviews;
   final String image;
   final String category;
+  final String subcategory;
   final bool isFeatured;
 
   const ProductModel({
@@ -22,6 +23,7 @@ class ProductModel {
     required this.reviews,
     required this.image,
     required this.category,
+    required this.subcategory,
     required this.isFeatured,
   });
 
@@ -37,6 +39,7 @@ class ProductModel {
       reviews: json['reviews'],
       image: json['image'],
       category: json['category'],
+      subcategory: json['subcategory'],
       isFeatured: json['isFeatured'],
     );
   }

@@ -36,6 +36,7 @@ class HomeController extends ChangeNotifier {
       reviews: p.reviews,
       image: p.image,
       category: p.category,
+      subcategory: p.subcategory,
       isFeatured: p.isFeatured,
     )).toList();
     

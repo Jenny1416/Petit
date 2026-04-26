@@ -10,6 +10,7 @@ class ProductModel {
   final String discount;
   final double rating;
   final String reviews;
+  final String? subcategory;
 
   const ProductModel({
     required this.id,
@@ -21,6 +22,7 @@ class ProductModel {
     required this.discount,
     required this.rating,
     required this.reviews,
+    this.subcategory,
   });
 }
 
@@ -107,6 +109,25 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
               ),
+              if (product.subcategory != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF32B56A).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      product.subcategory!,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF32B56A),
+                      ),
+                    ),
+                  ),
+                ),
               const SizedBox(height: 8),
               Text(
                 product.name,
