@@ -25,16 +25,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   Future<void> handleSendResetLink() async {
-    setState(() {
-      isLoading = true;
-    });
+    setState(() => isLoading = true);
 
     final email = emailController.text.trim();
     final error = await controller.sendResetLink(email);
 
-    setState(() {
-      isLoading = false;
-    });
+    setState(() => isLoading = false);
 
     if (!mounted) return;
 
@@ -54,39 +50,59 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            const SizedBox(height: 24),
-            const AppLogo(),
-            const SizedBox(height: 24),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                '¿Has olvidado tu contraseña?',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                const AppLogo(),
+                const SizedBox(height: 32),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '¿Has olvidado tu contraseña?',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Ingresa tu correo electrónico para continuar.',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+                const SizedBox(height: 32),
+                CustomTextField(
+                  hintText: 'Correo electrónico',
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  '* Le enviaremos un mensaje para establecer o restablecer su nueva contraseña',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                const SizedBox(height: 40),
+                PrimaryButton(
+                  text: isLoading ? 'Enviando...' : 'Enviar',
+                  onPressed: isLoading ? null : handleSendResetLink,
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancelar'),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Ingresa tu correo electrónico para continuar.',
-              ),
-            ),
-            const SizedBox(height: 16),
-            CustomTextField(
-              hintText: 'Correo electrónico',
-              controller: emailController,
-            ),
-            const SizedBox(height: 24),
-            PrimaryButton(
-              text: isLoading ? 'Enviando...' : 'Enviar',
-              onPressed: isLoading ? null : handleSendResetLink,
-            ),
-          ],
+          ),
         ),
       ),
     );

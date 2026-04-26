@@ -1,58 +1,104 @@
 import '../models/user_model.dart';
 
 class AuthService {
-  final List<UserModel> _users = [];
+  // Singleton pattern
+  static final AuthService _instance = AuthService._internal();
+  factory AuthService() => _instance;
+  AuthService._internal();
 
-  Future<bool> login(String email, String password) async {
+  // Simulación de base de datos en memoria
+  static final List<UserModel> _users = [
+    UserModel(
+      email: 'test@test.com',
+      password: 'password123',
+      phone: '123456789',
+    ),
+  ];
+
+  UserModel? _currentUser;
+  UserModel? get currentUser => _currentUser;
+  
+  // Variable temporal para el flujo de recuperación
+  String? passwordResetEmail;
+
+  Future<UserModel?> login(String email, String password) async {
     await Future.delayed(const Duration(seconds: 1));
+    final cleanEmail = email.trim().toLowerCase();
 
     try {
-      _users.firstWhere(
-            (u) => u.email == email && u.password == password,
+      final user = _users.firstWhere(
+        (u) => u.email.toLowerCase() == cleanEmail && u.password == password,
       );
-      return true;
+      _currentUser = user;
+      _logActivity('Inicio de sesión');
+      return user;
     } catch (e) {
-      return false;
+      return null;
     }
   }
 
-  Future<bool> register(String email, String password, String phone) async {
+  Future<bool> register(String email, String password, String phone, String? imagePath) async {
     await Future.delayed(const Duration(seconds: 1));
+    final cleanEmail = email.trim().toLowerCase();
 
-    final exists = _users.any((u) => u.email == email);
+    final exists = _users.any((u) => u.email.toLowerCase() == cleanEmail);
     if (exists) return false;
 
-    _users.add(
-      UserModel(
-        email: email,
-        password: password,
-        phone: phone,
-      ),
+    final newUser = UserModel(
+      email: cleanEmail,
+      password: password,
+      phone: phone,
+      imagePath: imagePath,
+      activityLogs: ['Cuenta creada'],
     );
 
+    _users.add(newUser);
+    _currentUser = newUser;
     return true;
   }
 
   Future<bool> sendResetLink(String email) async {
     await Future.delayed(const Duration(seconds: 1));
-
-    final exists = _users.any((u) => u.email == email);
-    return exists;
+    final cleanEmail = email.trim().toLowerCase();
+    return _users.any((u) => u.email.toLowerCase() == cleanEmail);
   }
 
   Future<bool> resetPassword(String email, String newPassword) async {
     await Future.delayed(const Duration(seconds: 1));
+    final cleanEmail = email.trim().toLowerCase();
 
-    final index = _users.indexWhere((u) => u.email == email);
-
+    final index = _users.indexWhere((u) => u.email.toLowerCase() == cleanEmail);
     if (index == -1) return false;
 
-    _users[index] = UserModel(
-      email: email,
-      password: newPassword,
-      phone: _users[index].phone,
-    );
-
+    _users[index] = _users[index].copyWith(password: newPassword);
+    
+    if (_currentUser?.email.toLowerCase() == cleanEmail) {
+      _currentUser = _users[index];
+    }
+    
+    _logActivity('Contraseña actualizada');
     return true;
+  }
+
+  void logout() {
+    _logActivity('Cierre de sesión');
+    _currentUser = null;
+  }
+
+  void _logActivity(String activity) {
+    if (_currentUser != null) {
+      final logEntry = '${DateTime.now().toString().split('.')[0]}: $activity';
+      final updatedLogs = List<String>.from(_currentUser!.activityLogs)..add(logEntry);
+      _currentUser = _currentUser!.copyWith(activityLogs: updatedLogs);
+      
+      final index = _users.indexWhere((u) => u.email.toLowerCase() == _currentUser!.email.toLowerCase());
+      if (index != -1) {
+        _users[index] = _currentUser!;
+      }
+    }
+  }
+
+  void addActivity(String activity) {
+    _logActivity(activity);
   }
 }
