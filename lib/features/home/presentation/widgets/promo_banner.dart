@@ -1,101 +1,219 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
-class PromoBanner extends StatelessWidget {
+class BannerData {
+  final String title;
+  final String subtitle;
+  final String image;
+  final bool showButton;
+
+  const BannerData({
+    required this.title,
+    required this.subtitle,
+    required this.image,
+    this.showButton = false,
+  });
+}
+
+class PromoBanner extends StatefulWidget {
   const PromoBanner({super.key});
+
+  @override
+  State<PromoBanner> createState() => _PromoBannerState();
+}
+
+class _PromoBannerState extends State<PromoBanner> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+  Timer? _timer;
+
+  final List<BannerData> _banners = [
+    const BannerData(
+      title: '50-40% OFF',
+      subtitle: 'Ahora en Accesorios\nTodos los productos',
+      image: 'assets/images/2148949616.jpg',
+      showButton: true,
+    ),
+    const BannerData(
+      title: 'ENVÍO GRATIS',
+      subtitle: 'En compras mayores a \$99\nEn toda la tienda',
+      image: 'assets/images/2148949590.jpg',
+      showButton: false,
+    ),
+    const BannerData(
+      title: 'NUEVA COLECCIÓN',
+      subtitle: 'Accesorios exclusivos\npara tu mejor amigo',
+      image: 'assets/images/63247.jpg',
+      showButton: true,
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (!mounted) return;
+      if (_currentPage < _banners.length - 1) {
+        _currentPage++;
+      } else {
+        _currentPage = 0;
+      }
+
+      if (_pageController.hasClients) {
+        _pageController.animateToPage(
+          _currentPage,
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          height: 155,
+        SizedBox(
+          height: 200,
           width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            image: const DecorationImage(
-              image: AssetImage('assets/banners/promo_banner.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              gradient: LinearGradient(
-                colors: [
-                  Colors.black.withOpacity(0.08),
-                  Colors.transparent,
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '50-40% OFF',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Ahorra en [productos]\nTodos los productos',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    height: 1.35,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 9,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.white, width: 1.2),
-                  ),
-                  child: const Text(
-                    'Compra ahora  →',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          child: PageView.builder(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPage = index;
+              });
+            },
+            itemCount: _banners.length,
+            itemBuilder: (context, index) {
+              return _buildBannerItem(_banners[index]);
+            },
           ),
         ),
         const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _dot(const Color(0xFF27B36A)),
-            const SizedBox(width: 6),
-            _dot(const Color(0xFFD9D9D9)),
-            const SizedBox(width: 6),
-            _dot(const Color(0xFFD9D9D9)),
-          ],
+          children: List.generate(
+            _banners.length,
+            (index) => _buildDot(index == _currentPage),
+          ),
         ),
       ],
     );
   }
 
-  Widget _dot(Color color) {
+  Widget _buildBannerItem(BannerData banner) {
     return Container(
-      width: 8,
-      height: 8,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
+        borderRadius: BorderRadius.circular(22),
+        image: DecorationImage(
+          image: AssetImage(banner.image),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(
+            Colors.black.withOpacity(0.2), // Filtro oscuro para que el texto blanco resalte
+            BlendMode.darken,
+          ),
+        ),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              banner.title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 32,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.5,
+                shadows: [
+                  Shadow(
+                    offset: Offset(0, 2),
+                    blurRadius: 4,
+                    color: Colors.black26,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              banner.subtitle,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                height: 1.2,
+                fontWeight: FontWeight.w600,
+                shadows: [
+                  Shadow(
+                    offset: Offset(0, 1),
+                    blurRadius: 2,
+                    color: Colors.black26,
+                  ),
+                ],
+              ),
+            ),
+            if (banner.showButton) ...[
+              const SizedBox(height: 16),
+              InkWell(
+                onTap: () {
+                  // Navegación futura
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.white, width: 1.8),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Compra ahora',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(Icons.arrow_forward, color: Colors.white, size: 16),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDot(bool isActive) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      width: isActive ? 10 : 7,
+      height: 7,
+      decoration: BoxDecoration(
+        color: isActive ? const Color(0xFF27B36A) : const Color(0xFFD9D9D9),
+        borderRadius: BorderRadius.circular(4),
       ),
     );
   }

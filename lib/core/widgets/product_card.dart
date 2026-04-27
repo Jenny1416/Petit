@@ -42,23 +42,39 @@ class ProductSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 305,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: products.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 14),
-        itemBuilder: (context, index) {
-          final product = products[index];
-          return ProductCard(
-            product: product,
-            isFavorite: isFavorite?.call(product.id) ?? false,
-            onFavoriteToggle: onFavoriteToggle != null 
-                ? () => onFavoriteToggle!(product.id) 
-                : null,
-          );
-        },
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (title.isNotEmpty) ...[
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF111111),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+        SizedBox(
+          height: 325, // Aumentado de 310 a 325 para mayor seguridad
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: products.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 14),
+            itemBuilder: (context, index) {
+              final product = products[index];
+              return ProductCard(
+                product: product,
+                isFavorite: isFavorite?.call(product.id) ?? false,
+                onFavoriteToggle: onFavoriteToggle != null 
+                    ? () => onFavoriteToggle!(product.id) 
+                    : null,
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
@@ -78,150 +94,168 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 160,
+      width: 165,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20), // Bordes más redondeados
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
             blurRadius: 10,
-            offset: const Offset(0, 3),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+          // Área de imagen con botón de favorito
+          Stack(
             children: [
               Container(
-                height: 120,
+                height: 130,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: const Color(0xFFF5F5F5),
-                  image: DecorationImage(
-                    image: AssetImage(product.image),
+                  borderRadius: BorderRadius.circular(16),
+                  color: const Color(0xFFF6F6F6),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    product.image,
                     fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(Icons.pets, color: Colors.grey, size: 40);
+                    },
                   ),
                 ),
               ),
-              if (product.subcategory != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: GestureDetector(
+                  onTap: onFavoriteToggle,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF32B56A).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
+                    padding: const EdgeInsets.all(6),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
                     ),
-                    child: Text(
-                      product.subcategory!,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF32B56A),
-                      ),
+                    child: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      size: 18,
+                      color: isFavorite ? const Color(0xFFD10E3C) : const Color(0xFFBCBCBC),
                     ),
                   ),
                 ),
-              const SizedBox(height: 8),
-              Text(
-                product.name,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 13,
-                  height: 1.2,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF111111),
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                product.brand,
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: Color(0xFF666666),
-                ),
-              ),
-              const Spacer(),
-              Text(
-                product.price,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF111111),
-                ),
-              ),
-              const SizedBox(height: 1),
-              Row(
-                children: [
-                  Text(
-                    product.oldPrice,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: Color(0xFF999999),
-                      decoration: TextDecoration.lineThrough,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    product.discount,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: Color(0xFF32B56A),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  const Icon(Icons.star, color: Color(0xFFFFC107), size: 12),
-                  const Icon(Icons.star, color: Color(0xFFFFC107), size: 12),
-                  const Icon(Icons.star, color: Color(0xFFFFC107), size: 12),
-                  const Icon(Icons.star, color: Color(0xFFFFC107), size: 12),
-                  const Icon(Icons.star_half, color: Color(0xFFFFC107), size: 12),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      '${product.rating} | ${product.reviews}',
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: Color(0xFF777777),
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
-          if (onFavoriteToggle != null)
-            Positioned(
-              top: 4,
-              right: 4,
-              child: GestureDetector(
-                onTap: onFavoriteToggle,
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    size: 16,
-                    color: isFavorite ? const Color(0xFFD10E3C) : Colors.grey,
-                  ),
+          
+          const SizedBox(height: 10),
+          
+          // Etiqueta de Subcategoría (Píldora)
+          if (product.subcategory != null)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFF27B36A).withOpacity(0.08),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                product.subcategory!,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF27B36A),
                 ),
               ),
             ),
+          
+          const SizedBox(height: 8),
+          
+          // Nombre del Producto
+          Text(
+            product.name,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 14,
+              height: 1.2,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF111111),
+            ),
+          ),
+          
+          const SizedBox(height: 2),
+          
+          // Marca
+          Text(
+            product.brand,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Color(0xFF999999),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          
+          const SizedBox(height: 8), // Reemplazo Spacer por un espacio fijo manejable
+          
+          // Precio Actual
+          Text(
+            product.price,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              color: Color(0xFF111111),
+            ),
+          ),
+          
+          // Precio Anterior y Descuento
+          Row(
+            children: [
+              Text(
+                product.oldPrice,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFFBBBBBB),
+                  decoration: TextDecoration.lineThrough,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                product.discount.startsWith('-') ? product.discount : '-${product.discount}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF27B36A),
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 8),
+          
+          // Estrellas y Reviews
+          Row(
+            children: [
+              const Icon(Icons.star, color: Color(0xFFFFB800), size: 14),
+              const Icon(Icons.star, color: Color(0xFFFFB800), size: 14),
+              const Icon(Icons.star, color: Color(0xFFFFB800), size: 14),
+              const Icon(Icons.star, color: Color(0xFFFFB800), size: 14),
+              const Icon(Icons.star_half, color: Color(0xFFFFB800), size: 14),
+              const SizedBox(width: 6),
+              Text(
+                '${product.rating}  ${product.reviews}',
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF777777),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -236,7 +270,7 @@ class NewArrivalsSection extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
       ),
       padding: const EdgeInsets.only(bottom: 14),
       child: Column(
@@ -246,7 +280,7 @@ class NewArrivalsSection extends StatelessWidget {
             height: 220,
             width: double.infinity,
             decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               image: DecorationImage(
                 image: AssetImage('assets/products/new_arrival.png'),
                 fit: BoxFit.cover,
@@ -329,7 +363,7 @@ class UpcomingSection extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
           ),
           padding: const EdgeInsets.only(bottom: 12),
           child: Column(
@@ -339,7 +373,7 @@ class UpcomingSection extends StatelessWidget {
                 height: 210,
                 width: double.infinity,
                 decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                   image: DecorationImage(
                     image: AssetImage('assets/banners/upcoming_banner.png'),
                     fit: BoxFit.cover,
