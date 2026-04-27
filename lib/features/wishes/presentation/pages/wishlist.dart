@@ -79,7 +79,7 @@ class _WishlistPageState extends State<WishlistPage> {
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            childAspectRatio: 0.65,
+                            childAspectRatio: 0.54, // Ajustado para evitar overflow
                             crossAxisSpacing: 14,
                             mainAxisSpacing: 14,
                           ),
@@ -97,6 +97,7 @@ class _WishlistPageState extends State<WishlistPage> {
                             discount: '${product.discount}%Off',
                             rating: product.rating,
                             reviews: product.reviews.toString(),
+                            subcategory: product.subcategory, // Añadido subcategory
                           ),
                           isFavorite: true, // Siempre es true en la Wishlist
                           onFavoriteToggle: () => _controller.toggleFavorite(product.id),

@@ -9,6 +9,7 @@ class HomeProduct {
   final int reviews;
   final String image;
   final String category;
+  final String subcategory;
   final bool isFeatured;
 
   const HomeProduct({
@@ -22,6 +23,7 @@ class HomeProduct {
     required this.reviews,
     required this.image,
     required this.category,
+    required this.subcategory,
     required this.isFeatured,
   });
 
@@ -37,6 +39,7 @@ class HomeProduct {
       reviews: json['reviews'] as int,
       image: json['image'] as String,
       category: json['category'] as String,
+      subcategory: json['subcategory'] as String,
       isFeatured: json['isFeatured'] as bool,
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../pages/offer_page.dart';
 
 class OfferCard extends StatelessWidget {
   const OfferCard({super.key});
@@ -44,21 +45,30 @@ class OfferCard extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: const Color(0xFF135A38),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.18),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const OfferPage()),
+              );
+            },
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF135A38),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.18),
+                ),
               ),
-            ),
-            child: const Text(
-              'Ver todo  →',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+              child: const Text(
+                'Ver todo  →',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -181,18 +191,24 @@ class _VisitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-      decoration: BoxDecoration(
-        color: const Color(0xFF109E41),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: const Text(
-        'Visitar ahora →',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
+    return InkWell(
+      onTap: () {
+        // Podría ir a la misma página o a una de detalle de producto
+      },
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+        decoration: BoxDecoration(
+          color: const Color(0xFF109E41),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: const Text(
+          'Visitar ahora →',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
